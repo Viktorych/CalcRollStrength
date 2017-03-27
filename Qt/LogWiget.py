@@ -9,11 +9,11 @@ from CRS import Parametrs
 class LogWiget(QWidget):
     value_changed = pyqtSignal(object)
 
-    def __init__(self,  parent=None, *args, **kwargs):
+    def __init__(self, param, parent=None, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.textEdit = QTextEdit(self)
-        self.Param=Parametrs.Рarameters()
+        self.Param=param
         self.Param.Calc()
         self.textEdit.setStyleSheet("background: grey")
         #self.textEdit.setText("<b style='color:#ffFF00'>Cтарт приложения</span></b>")

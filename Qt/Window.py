@@ -10,8 +10,9 @@ from reportlab.pdfgen import canvas
 
 class MainWindow(QMainWindow):
     """Главное окно приложения"""
-    def __init__(self):
+    def __init__(self, param):
         super().__init__()
+        self.param=param
         self.setAction()
         self.setMenuBar()
         self.setToolBar()
@@ -22,7 +23,7 @@ class MainWindow(QMainWindow):
 
         #self.Variables = Variables
         #print (self.Variable.)
-        self.CentralWG=CentralWiget.CWG()
+        self.CentralWG=CentralWiget.CWG(self.param)
         self.setCentralWidget(self.CentralWG)
 
     def setAction(self):
