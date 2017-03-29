@@ -1,6 +1,8 @@
 from PyQt5.QtCore import QFileInfo
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon,QPageLayout,QPainter
 from PyQt5.QtGui import QPdfWriter
+from PyQt5.QtGui import QPen
 from PyQt5.QtPrintSupport import QPrinter, QPrintPreviewDialog
 from PyQt5.QtWidgets import QAction, qApp
 from PyQt5.QtWidgets import QFileDialog
@@ -32,7 +34,7 @@ class MainWindow(QMainWindow):
         #print (self.Variable.)
         self.CentralWG=CentralWiget.CWG(self.param, self)
         self.setCentralWidget(self.CentralWG)
-        self.resultTE =QTextEdit(self)
+        self.resultTE =QTextEdit()
     def setAction(self):
         self.exitAction = QAction(QIcon('Images/Exit.png'), 'Выход', self)
         self.exitAction.setShortcut('Ctrl+Q')
@@ -98,7 +100,7 @@ class MainWindow(QMainWindow):
         fileMenu.addAction(self.openFileAction)
         fileMenu.addAction(self.saveFileAction)
         fileMenu.addAction(self.saveTXTFileAction)
-        #fileMenu.addAction(self.savePDFFileAction)
+        fileMenu.addAction(self.savePDFFileAction)
         fileMenu.addSeparator()
         fileMenu.addAction(self.printAction)
         fileMenu.addSeparator()
@@ -117,7 +119,7 @@ class MainWindow(QMainWindow):
         self.toolbar.addAction(self.openFileAction)
         self.toolbar.addAction(self.saveFileAction)
         self.toolbar.addAction(self.saveTXTFileAction)
-        #self.toolbar.addAction(self.savePDFFileAction)
+        self.toolbar.addAction(self.savePDFFileAction)
 
         #self.toolbar.addAction(self.settingAction)
         self.toolbar.addAction(self.printAction)
@@ -198,9 +200,12 @@ class MainWindow(QMainWindow):
         writer.setTitle("программа расчета валка на прочность")
         painter=QPainter()
         painter.begin(writer)
-        #color
-        #self.resultTE.document.conncet(painter)
-
+        pen = QPen(Qt.SolidLine)
+        pen.setColor(Qt.black)
+        pen.setWidth(2)
+        painter.setPen(pen)
+        painter.drawLine(20, 0, 20, 100)
+        painter.drawText(100, 100, 100, 100, Qt.AlignLeft, "ssssss")
         painter.drawLine(10,10,30,30)
         painter.end()
             #painter= self.resultTE.
