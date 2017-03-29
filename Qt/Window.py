@@ -1,9 +1,15 @@
-from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QFileInfo
+from PyQt5.QtGui import QIcon,QPageLayout,QPainter
+from PyQt5.QtGui import QPdfWriter
+from PyQt5.QtPrintSupport import QPrinter, QPrintPreviewDialog
 from PyQt5.QtWidgets import QAction, qApp
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.QtWidgets import QMessageBox
 #from App import App_Variable
+from PyQt5 import  QtPrintSupport
+from PyQt5.QtWidgets import QTextEdit
+
 from Qt import CentralWiget
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
@@ -16,16 +22,17 @@ class MainWindow(QMainWindow):
         self.setAction()
         self.setMenuBar()
         self.setToolBar()
-        self.setGeometry(300, 300, 1200, 600)
+        self.setGeometry(200, 200, 1200, 800)
         self.setWindowTitle('Программа рассчета валка на прочность')
         self.statusBar().showMessage('Готово')
         self.setWindowIcon(QIcon('Images/app_icon.png'))  # App Icon
-
+        self.printer=QtPrintSupport.QPrinter()
+        self.printer.setPageOrientation(QPageLayout.Landscape)
         #self.Variables = Variables
         #print (self.Variable.)
         self.CentralWG=CentralWiget.CWG(self.param, self)
         self.setCentralWidget(self.CentralWG)
-
+        self.resultTE =QTextEdit(self)
     def setAction(self):
         self.exitAction = QAction(QIcon('Images/Exit.png'), 'Выход', self)
         self.exitAction.setShortcut('Ctrl+Q')
@@ -58,10 +65,15 @@ class MainWindow(QMainWindow):
         self.saveFileAction.setStatusTip('Сохранить условия в файл')
         self.saveFileAction.triggered.connect(self.Save)
 
-        self.savePDFFileAction = QAction(QIcon('Images/savetotxt.jpg'), 'Сохранить расчет в TXT', self)
+        self.savePDFFileAction = QAction(QIcon('Images/PDF.jpg'), 'Сохранить расчет в TXT', self)
         # self.savePDFFileAction.setShortcut('Ctrl+Q')
         self.savePDFFileAction.setStatusTip('Сохранить расчет в файл')
-        self.savePDFFileAction.triggered.connect(self.SaveTXT)
+        self.savePDFFileAction.triggered.connect(self.filePrintPdf)
+
+        self.saveTXTFileAction = QAction(QIcon('Images/savetotxt.jpg'), 'Сохранить расчет в TXT', self)
+        # self.savePDFFileAction.setShortcut('Ctrl+Q')
+        self.saveTXTFileAction.setStatusTip('Сохранить расчет в файл')
+        self.saveTXTFileAction.triggered.connect(self.SaveTXT)
 
 
         self.settingAction = QAction(QIcon('Images/setting.png'), 'Насторойки', self)
@@ -72,24 +84,25 @@ class MainWindow(QMainWindow):
         self.printAction = QAction(QIcon('Images/print.png'), 'Печать', self)
         # self.printAction.setShortcut('Ctrl+Q')
         self.printAction.setStatusTip('Печать')
-        # self.printAction.triggered.connect(qApp.quit)
+        self.printAction.triggered.connect(self.preview)
 
     def setMenuBar(self):
         """определение Меню бара"""
         self.menubar = self.menuBar()
         fileMenu = self.menubar.addMenu('Файл')
-        viewMenu = self.menubar.addMenu('Вид')
-        settingMenu = self.menubar.addMenu('Настройка')
+        #viewMenu = self.menubar.addMenu('Вид')
+        #settingMenu = self.menubar.addMenu('Настройка')
         helpMenu = self.menubar.addMenu('Помощь')
         """Меню Файл"""
         fileMenu.addAction(self.newFileAction)
         fileMenu.addAction(self.openFileAction)
         fileMenu.addAction(self.saveFileAction)
-        fileMenu.addAction(self.savePDFFileAction)
+        fileMenu.addAction(self.saveTXTFileAction)
+        #fileMenu.addAction(self.savePDFFileAction)
         fileMenu.addSeparator()
         fileMenu.addAction(self.printAction)
         fileMenu.addSeparator()
-        fileMenu.addAction(self.settingAction)
+        #fileMenu.addAction(self.settingAction)
         fileMenu.addSeparator()
         fileMenu.addAction(self.exitAction)
         """Меню Помощь"""
@@ -103,8 +116,10 @@ class MainWindow(QMainWindow):
         #self.toolbar = self.addToolBar('Setting')
         self.toolbar.addAction(self.openFileAction)
         self.toolbar.addAction(self.saveFileAction)
-        self.toolbar.addAction(self.savePDFFileAction)
-        self.toolbar.addAction(self.settingAction)
+        self.toolbar.addAction(self.saveTXTFileAction)
+        #self.toolbar.addAction(self.savePDFFileAction)
+
+        #self.toolbar.addAction(self.settingAction)
         self.toolbar.addAction(self.printAction)
         self.toolbar.addAction(self.exitAction)
 
@@ -137,8 +152,9 @@ class MainWindow(QMainWindow):
         if fname[0]:
             f = open(fname[0], 'rb')
             self.param.Load(f)
-            self.ParamTableWG.setmodel()
 
+            self.ParamTableWG.setmodel()
+            self.CentralWG.Calc()
             #self.Variables.load(f)
             f.close()
             #print ("load  \n",self.Variables)
@@ -148,16 +164,50 @@ class MainWindow(QMainWindow):
             #self.CentralWG.LogWiget.add("Файл {} загружен.".format(f.name),1)
     def SaveTXT (self):
         fname = QFileDialog.getSaveFileName(self, "Сохранить файл", "Расчет.txt", filter="*.txt")
+        f = open(fname[0], 'wb')
+        self.param.SaveResult(f.name)
+        # self.Variables.save(f)
+        f.close()
 
-        if fname[0]:
-            f = open(fname[0], 'rb')
-            f.write(str(self.param))
+        #self.param.SaveResult
 
-            # self.Variables.load(f)
-            f.close()
+    def setParamTable (self, paramtablewg, resultte):
+        self.ParamTableWG=paramtablewg
+        self.resultTE=resultte
 
-    def setParamTable (self, paramtablewg):
-         self.ParamTableWG=paramtablewg
+    def preview (self):
+        printer = QPrinter(QPrinter.HighResolution)
+        preview = QPrintPreviewDialog(printer, self)
+        preview.paintRequested.connect(self.printPreview)
+        preview.exec_()
+
+
+
+    def printPreview(self, printer):
+        self.resultTE.print_(printer)
+
+    def filePrintPdf(self):
+        #fn, _ = QFileDialog.getSaveFileName(self, "Экспорт в PDF", None,
+#                                            "PDF files (*.pdf);;All Files (*)")
+
+        #if fn:
+            #if QFileInfo(fn).suffix().isEmpty():
+                #fn += '.pdf'
+        writer=QPdfWriter("test.pdf")
+        writer.setCreator("программа расчета валка на прочность")
+        writer.setTitle("программа расчета валка на прочность")
+        painter=QPainter()
+        painter.begin(writer)
+        #color
+        #self.resultTE.document.conncet(painter)
+
+        painter.drawLine(10,10,30,30)
+        painter.end()
+            #painter= self.resultTE.
+            #printer = QPrinter(QPrinter.HighResolution)
+            #printer.setOutputFormat(QPrinter.PdfFormat)
+            #printer.setOutputFileName(fn)
+            #self.resultTE.document.print_(printer)
 
 
 

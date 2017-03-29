@@ -58,8 +58,10 @@ class Рarameters:
         self.ListIndexParam=[]
         for k in self.List.keys():
             self.ListIndexParam.append(self.List[k])
-        self.strResult=["<b style='color:#00ff00'>Условие выполняется</span></b>", \
+        self.htmlResult=["<b style='color:#00ff00'>Условие выполняется</span></b>", \
                      "<b style='color:#ff0000'>Условие не выполняется</span></b>"]
+        self.strResult = ["Условие выполняется", \
+                           "Условие не выполняется"]
         self.Result=0
 
 
@@ -80,7 +82,7 @@ class Рarameters:
         str=str+"Расчетные параметры:<br>"
         for k in self.ListCalc.keys():
             str = "{} &nbsp;&nbsp;&nbsp;&nbsp;{}<br>".format(str, self.ListCalc[k].strConsol())
-        str = "{} {}".format(str, self.strResult[self.Result])
+        str = "{} {}".format(str, self.htmlResult[self.Result])
         return str
 
 
@@ -127,10 +129,10 @@ class Рarameters:
         Usl=qB/4
         self.ListCalc["Usl"].Value = round(Usl, 2)
         if Mrez<Usl :
-            self.ListCalc["Rezult"].Value = "{} &lt; {}".format(round(Mrez, 2),round(Usl, 2))
+            self.ListCalc["Rezult"].Value = "{} меньше {}".format(round(Mrez, 2),round(Usl, 2))
             self.Result=0
         else:
-            self.ListCalc["Rezult"].Value = "{} &gt;; {}".format(round(Mrez, 2), round(Usl, 2))
+            self.ListCalc["Rezult"].Value = "{} больше {}".format(round(Mrez, 2), round(Usl, 2))
             self.Result = 1
 
 

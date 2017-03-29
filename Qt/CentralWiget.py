@@ -1,5 +1,9 @@
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtWidgets import QSplitter
 from PyQt5.QtWidgets import QTextEdit
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
@@ -17,16 +21,36 @@ class CWG(QWidget):
         super().__init__(parent)
         self.param = param
         self.ParamTableWiget= ParamTableWiget(param,self)
-        win.setParamTable(self.ParamTableWiget)
+        self.Report = QTextEdit(self)
+        font = QFont()
+        font.setPointSize(12)
+        self.Report.setFont(font)
+        win.setParamTable(self.ParamTableWiget, self.Report)
+
         hbox = QHBoxLayout()
-        vbox = QVBoxLayout()
-        bCalc = QPushButton('Расчет', self)
-        self.Report= QTextEdit(self)
-        bCalc.clicked[bool].connect(self.Calc)
-        vbox.addWidget(self.ParamTableWiget)
-        vbox.addWidget(bCalc)
-        hbox.addLayout(vbox)
-        hbox.addWidget(self.Report)
+        #vbox = QVBoxLayout()
+
+        splitterH = QSplitter(Qt.Horizontal)
+        splitterH.addWidget(self.ParamTableWiget)
+        splitterH.addWidget(self.Report)
+        #splitterH.scroll(200,500)
+        splitterH.setSizes([250,500])
+        sp = splitterH.sizePolicy()
+        sp.setVerticalPolicy(QSizePolicy.Expanding)
+        splitterH.setSizePolicy(sp)
+
+        #hbox = QHBoxLayout()
+        # vbox.addStretch(1)
+        hbox.addWidget(splitterH)
+
+
+        #bCalc = QPushButton('Расчет', self)
+
+        #bCalc.clicked[bool].connect(self.Calc)
+        #vbox.addWidget(self.ParamTableWiget)
+        #vbox.addWidget(bCalc)
+        #hbox.addLayout(vbox)
+        #hbox.addWidget(self.Report)
         self.setLayout(hbox)
         self.Calc()
     def Calc (self):

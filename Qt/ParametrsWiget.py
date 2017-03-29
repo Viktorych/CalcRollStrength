@@ -2,6 +2,7 @@ from PyQt5.QtCore import QModelIndex
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtGui import QFont
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from PyQt5.QtGui import QPalette
 from PyQt5.QtWidgets import QHBoxLayout
@@ -61,6 +62,10 @@ class ParamTableWiget(QTableView):
         self.Param=param
         self.report=report
         self.setmodel()
+        font = QFont()
+        font.setPointSize(12)
+        self.setFont(font)
+        #self.setMaximumWidth(350)
         """
         self.sti=QStandardItemModel(parent= self)
         #sti.event()
@@ -109,9 +114,10 @@ class ParamTableWiget(QTableView):
         self.sti.setVerticalHeaderLabels(self.Param.List.keys())
         self.setModel(self.sti)
         self.setColumnWidth(0, 200)
-        self.setColumnWidth(1, 70)
+        self.setColumnWidth(1, 90)
         self.setColumnWidth(2, 50)
         # self.setC`
         self.setItemDelegateForColumn(1, ParamDelegate(self.Param, self.report))
+
 
 
