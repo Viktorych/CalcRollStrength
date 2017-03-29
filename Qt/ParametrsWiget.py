@@ -13,15 +13,17 @@ from PyQt5.QtWidgets import QWidget
 
 from CRS import Parametrs
 class ParamDelegate (QStyledItemDelegate):
-    def __init__(self, param):
+    def __init__(self, param, report):
         super().__init__()
         self.param=param
+        self.report=report
     def createEditor(self, parent, QStyleOptionViewItem, QModelIndex):
         editor=QLineEdit(parent)
+        editor.setInputMask("0000.00;_")
 
-        validator = QDoubleValidator(0.99, 9999.99, 2)
-        validator.setNotation(QDoubleValidator.StandardNotation)
-        editor.setValidator(validator)
+        #validator = QDoubleValidator(0.00, 9000.00, 2)
+        #validator.setNotation(QDoubleValidator.StandardNotation)
+        #editor.setValidator(validator)
         editor.setAlignment(Qt.AlignRight)
         editor.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Expanding)
         #editor.t`
@@ -43,7 +45,8 @@ class ParamDelegate (QStyledItemDelegate):
         #editor.parentWidget().setParam(index.row(),value)
         self.param.ListIndexParam[index.row()].Value=float(value)
 
-        self.param.Calc()
+        #self.param.Calc()
+        self.report.Calc()
 
 
 
@@ -52,11 +55,14 @@ class ParamDelegate (QStyledItemDelegate):
 class ParamTableWiget(QTableView):
     #value_changed = pyqtSignal(object)
 
-    def __init__(self, param, parent=None, *args, **kwargs):
+    def __init__(self, param, report, parent=None, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-
+        self.sti = QStandardItemModel(parent=self)
         self.Param=param
-        sti=QStandardItemModel(parent= self)
+        self.report=report
+        self.setmodel()
+        """
+        self.sti=QStandardItemModel(parent= self)
         #sti.event()
         for row in self.Param.List:
             itemName=QStandardItem(self.Param.List[row].Name)
@@ -71,27 +77,41 @@ class ParamTableWiget(QTableView):
             itemEdIzm.setSelectable(False)
 
             #print (self.Param.List[row].Value)
-            sti.appendRow([itemName,itemValue,itemEdIzm])
-        sti.setHorizontalHeaderLabels(["Параметр", "Значение", "Ед.изм"])
-        sti.setVerticalHeaderLabels(self.Param.List.keys())
+            self.sti.appendRow([itemName,itemValue,itemEdIzm])
+        self.sti.setHorizontalHeaderLabels(["Параметр", "Значение", "Ед.изм"])
+        self.sti.setVerticalHeaderLabels(self.Param.List.keys())
+        """
         #print (sti.index())
 
-        self.setModel(sti)
+
+        #self.item
+        #i=QModelIndex()
+
+
+    def setmodel (self):
+        self.sti = QStandardItemModel(parent=self)
+        # sti.event()
+        for row in self.Param.List:
+            itemName = QStandardItem(self.Param.List[row].Name)
+            itemName.setEditable(False)
+            itemName.setSelectable(False)
+            # itemName.
+            itemValue = QStandardItem(str(self.Param.List[row].Value))
+            itemValue.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter | Qt.AlignRight)
+
+            itemEdIzm = QStandardItem(self.Param.List[row].Ed_izm)
+            itemEdIzm.setEditable(False)
+            itemEdIzm.setSelectable(False)
+
+            # print (self.Param.List[row].Value)
+            self.sti.appendRow([itemName, itemValue, itemEdIzm])
+        self.sti.setHorizontalHeaderLabels(["Параметр", "Значение", "Ед.изм"])
+        self.sti.setVerticalHeaderLabels(self.Param.List.keys())
+        self.setModel(self.sti)
         self.setColumnWidth(0, 200)
         self.setColumnWidth(1, 70)
         self.setColumnWidth(2, 50)
-        #self.setC`
-        self.setItemDelegateForColumn(1,ParamDelegate(self.Param))
-        #self.item
-        #i=QModelIndex()
-    def setParam (self):
-        print ("dsdfds")
-        #self.Param.ListIndexParam[index].Value=value
-        """
-    def edit(self, index, trigger, event):
-        if self.edit(self, index, trigger, event):
-            print ('editing:', index.row(), index.column())
-            return True
-        return False
-        """
+        # self.setC`
+        self.setItemDelegateForColumn(1, ParamDelegate(self.Param, self.report))
+
 

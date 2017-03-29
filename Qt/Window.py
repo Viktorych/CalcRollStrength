@@ -23,7 +23,7 @@ class MainWindow(QMainWindow):
 
         #self.Variables = Variables
         #print (self.Variable.)
-        self.CentralWG=CentralWiget.CWG(self.param)
+        self.CentralWG=CentralWiget.CWG(self.param, self)
         self.setCentralWidget(self.CentralWG)
 
     def setAction(self):
@@ -58,10 +58,10 @@ class MainWindow(QMainWindow):
         self.saveFileAction.setStatusTip('Сохранить условия в файл')
         self.saveFileAction.triggered.connect(self.Save)
 
-        self.savePDFFileAction = QAction(QIcon('Images/PDF.jpg'), 'Сохранить расчет в PDF', self)
+        self.savePDFFileAction = QAction(QIcon('Images/savetotxt.jpg'), 'Сохранить расчет в TXT', self)
         # self.savePDFFileAction.setShortcut('Ctrl+Q')
-        self.savePDFFileAction.setStatusTip('Сохранить условия в файл')
-        self.savePDFFileAction.triggered.connect(self.SavePDF)
+        self.savePDFFileAction.setStatusTip('Сохранить расчет в файл')
+        self.savePDFFileAction.triggered.connect(self.SaveTXT)
 
 
         self.settingAction = QAction(QIcon('Images/setting.png'), 'Насторойки', self)
@@ -124,9 +124,10 @@ class MainWindow(QMainWindow):
         _fname = QFileDialog.getSaveFileName(self, "Сохранить файл", "Расчет.pickle", filter="*.pickle")
         if _fname[0]:
             f = open(_fname[0], 'wb')
+            self.param.Save(f)
             #self.Variables.save(f)
             f.close()
-            self.CentralWG.LogWiget.add("Файл {} сохранен.".format(f.name),1)
+            #self.CentralWG.LogWiget.add("Файл {} сохранен.".format(f.name),1)
 
     def Load(self):
 
@@ -135,6 +136,9 @@ class MainWindow(QMainWindow):
 
         if fname[0]:
             f = open(fname[0], 'rb')
+            self.param.Load(f)
+            self.ParamTableWG.setmodel()
+
             #self.Variables.load(f)
             f.close()
             #print ("load  \n",self.Variables)
@@ -142,29 +146,18 @@ class MainWindow(QMainWindow):
             #print ("set ver \n",self.CentralWG.treeview.Variables)
             #self.CentralWG.treeview.reload()
             #self.CentralWG.LogWiget.add("Файл {} загружен.".format(f.name),1)
-    def SavePDF (self):
-        #f = QFileDialog.getSaveFileName(self, "Сохранить файл", "Расчет.pdf", filter="*.pdf")
-        #print (f)
-        from reportlab.pdfgen import canvas
-        canvas = canvas.Canvas("form.pdf", pagesize=letter)
-        canvas.setLineWidth(.3)
-        canvas.setFont('Helvetica', 12)
+    def SaveTXT (self):
+        fname = QFileDialog.getSaveFileName(self, "Сохранить файл", "Расчет.txt", filter="*.txt")
 
-        canvas.drawString(30, 750, 'Расчеты')
-        canvas.drawString(30, 735, 'OF ACME INDUSTRIES')
-        canvas.drawString(500, 750, "12/12/2010")
-        canvas.line(480, 747, 580, 747)
+        if fname[0]:
+            f = open(fname[0], 'rb')
+            f.write(str(self.param))
 
-        canvas.drawString(275, 725, 'AMOUNT OWED:')
-        canvas.drawString(500, 725, "$1,000.00")
-        canvas.line(378, 723, 580, 723)
+            # self.Variables.load(f)
+            f.close()
 
-        canvas.drawString(30, 703, 'RECEIVED BY:')
-        canvas.line(120, 700, 580, 700)
-        canvas.drawString(120, 703, "JOHN DOE")
-
-        canvas.save()
-        #self.CentralWG.LogWiget.add("Файл {} сохранен.".format(f[0]), 1)
+    def setParamTable (self, paramtablewg):
+         self.ParamTableWG=paramtablewg
 
 
 

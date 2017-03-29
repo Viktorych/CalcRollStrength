@@ -1,4 +1,5 @@
 import math
+import pickle
 
 
 class Рarameter():
@@ -25,16 +26,16 @@ class Рarameters:
     def __init__(self):
         super().__init__()
         self.List = { \
-            "qB"    :Рarameter(1,"qВ материала",                1470,   "MPa", 1), \
-            "Dpp"   :Рarameter(1,"Диаметр перднего подшипника", 0,      "mm",1),\
-            "Lpp"   :Рarameter(2, "Длина переднего подшипника", 45,     "mm", 1), \
-            "Dzp"   :Рarameter(3, "Диаметр заднего подшипника", 0,      "mm", 1), \
-            "Lzp"   :Рarameter(4, "Длина заднего подшипника",   27,     "mm", 1), \
-            "Dvsr"  :Рarameter(5, "Cредний диаметр валка",      85,     "mm", 1), \
+            "qB"    :Рarameter(1,"qВ материала",                1470.00,   "MPa", 1), \
+            "Dpp"   :Рarameter(1,"Диаметр перднего подшипника", 0.00,      "mm",1),\
+            "Lpp"   :Рarameter(2, "Длина переднего подшипника", 45.00,     "mm", 1), \
+            "Dzp"   :Рarameter(3, "Диаметр заднего подшипника", 0.00,      "mm", 1), \
+            "Lzp"   :Рarameter(4, "Длина заднего подшипника",   27.00,     "mm", 1), \
+            "Dvsr"  :Рarameter(5, "Cредний диаметр валка",      85.00,     "mm", 1), \
             "P"     :Рarameter(6, "Усилие прокатки", 15, "kH", 1), \
-            "Dku"   :Рarameter(6, "Диаметр калибрующего участка", 16,   "mm", 1), \
-            "Lku"   :Рarameter(6, "Длина калибрующего участка", 37.5,   "mm", 1), \
-            "Dou"   :Рarameter(6, "Диаметр обжимного участка",  10,     "mm", 1), \
+            "Dku"   :Рarameter(6, "Диаметр калибрующего участка", 16.00,   "mm", 1), \
+            "Lku"   :Рarameter(6, "Длина калибрующего участка", 37.50,   "mm", 1), \
+            "Dou"   :Рarameter(6, "Диаметр обжимного участка",  10.00,     "mm", 1), \
             "Lou"   :Рarameter(6, "Длина обжимного участка",    27.5,   "mm", 1), \
             }#параметры для расчетов
 
@@ -56,8 +57,11 @@ class Рarameters:
             }#Расчитанные параметры
         self.ListIndexParam=[]
         for k in self.List.keys():
-
             self.ListIndexParam.append(self.List[k])
+        self.strResult=["<b style='color:#00ff00'>Условие выполняется</span></b>", \
+                     "<b style='color:#ff0000'>Условие не выполняется</span></b>"]
+        self.Result=0
+
 
     def __str__(self, *args, **kwargs):
         str="Параметры для расчетов:\n"
@@ -66,7 +70,7 @@ class Рarameters:
         str=str+"Расчетные параметры:\n"
         for k in self.ListCalc.keys():
             str = "{} {}\n".format(str, self.ListCalc[k].strConsol())
-
+        str="{} {}".format(str,self.strResult[self.Result])
         return str
 
     def strWin(self, *args, **kwargs):
@@ -76,7 +80,7 @@ class Рarameters:
         str=str+"Расчетные параметры:<br>"
         for k in self.ListCalc.keys():
             str = "{} &nbsp;&nbsp;&nbsp;&nbsp;{}<br>".format(str, self.ListCalc[k].strConsol())
-
+        str = "{} {}".format(str, self.strResult[self.Result])
         return str
 
 
@@ -123,13 +127,46 @@ class Рarameters:
         Usl=qB/4
         self.ListCalc["Usl"].Value = round(Usl, 2)
         if Mrez<Usl :
-            self.ListCalc["Rezult"].Value = "{} &lt; {} условие выполняется".format(round(Mrez, 2),round(Usl, 2))
+            self.ListCalc["Rezult"].Value = "{} &lt; {}".format(round(Mrez, 2),round(Usl, 2))
+            self.Result=0
+        else:
+            self.ListCalc["Rezult"].Value = "{} &gt;; {}".format(round(Mrez, 2), round(Usl, 2))
+            self.Result = 1
 
 
-
-    def SaveToFile (self, file):
+    def SaveResult (self, file):
         with open(file, 'w', encoding="utf-8", errors="surrogateescape") as f:
             f.write(self.__str__())
+
+    def Save(self, file):
+        #ouf = open('datafile.dat', 'w')
+        #marshal.dump(self, ouf,1)
+        #ouf.close()
+        with file:
+            # Pickle the 'data' dictionary using the highest protocol available.
+            pickle.dump(self, file, pickle.HIGHEST_PROTOCOL)
+        #print(self)
+
+    def Load(self, file):
+        #ouf = open('datafile.dat', 'w')
+        #marshal.dump(self, ouf,1)
+        #ouf.close()
+        # fname = QFileDialog.getOpenFileName(self, 'Open file', './')
+        #
+        # if fname[0]:
+        #     # #f = open(fname[0], 'r')
+        #     #
+        #     # with f:
+        #     #     data = f.read()
+        #     #     self.textEdit.setText(data)
+        #     f = open(fname[0], 'rb')
+        with  file:
+                # The protocol version used is detected automatically, so we do not
+                # have to specify it.
+            #print (file)
+            new = pickle.load(file)
+        self.List=new.List
+        #print (self)
 
     def Print(self):
         """Вывод в консоль"""
