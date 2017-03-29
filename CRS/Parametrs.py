@@ -54,6 +54,11 @@ class Рarameters:
             "Usl":Рarameter(10, "Условие", 0, "MPa", 1), \
             "Rezult": Рarameter(10, "Результат", 0, "", 1), \
             }#Расчитанные параметры
+        self.ListIndexParam=[]
+        for k in self.List.keys():
+
+            self.ListIndexParam.append(self.List[k])
+
     def __str__(self, *args, **kwargs):
         str="Параметры для расчетов:\n"
         for k in self.List.keys():
@@ -67,10 +72,10 @@ class Рarameters:
     def strWin(self, *args, **kwargs):
         str="Параметры для расчетов:<br>"
         for k in self.List.keys():
-            str="{} {}<br>".format (str, self.List[k].strConsol())
+            str="{} &nbsp;&nbsp;&nbsp;&nbsp;{}<br>".format (str, self.List[k].strConsol())
         str=str+"Расчетные параметры:<br>"
         for k in self.ListCalc.keys():
-            str = "{} {}<br>".format(str, self.ListCalc[k].strConsol())
+            str = "{} &nbsp;&nbsp;&nbsp;&nbsp;{}<br>".format(str, self.ListCalc[k].strConsol())
 
         return str
 
@@ -118,7 +123,7 @@ class Рarameters:
         Usl=qB/4
         self.ListCalc["Usl"].Value = round(Usl, 2)
         if Mrez<Usl :
-            self.ListCalc["Rezult"].Value = "{} < {} условие выполняется".format(round(Mrez, 2),round(Usl, 2))
+            self.ListCalc["Rezult"].Value = "{} &lt; {} условие выполняется".format(round(Mrez, 2),round(Usl, 2))
 
 
 

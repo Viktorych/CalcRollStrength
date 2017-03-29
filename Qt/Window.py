@@ -115,7 +115,9 @@ class MainWindow(QMainWindow):
                               Программа расчета валка на прочность''')
 
     def Setting (self):
-        pass
+        self.param.Calc()
+        print (self.param)
+
         #self.CentralWG.LogWiget.add(self.Variables.info(),0)
 
     def Save (self):

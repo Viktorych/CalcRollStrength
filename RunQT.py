@@ -6,6 +6,7 @@ if __name__ == '__main__':
     import sys
     app = QApplication(sys.argv)
     param=Parametrs.Рarameters()
+    #param.List.keys()
     #print (QStyleFactory.keys())
     # qApp.setStyle(QStyleFactory.create("Fusion"))
     #
