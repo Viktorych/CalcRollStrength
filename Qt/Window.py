@@ -1,21 +1,17 @@
-import os
 
-from PyQt5.QtCore import QFileInfo, QSize, QPoint
-from PyQt5.QtCore import Qt
+
 from PyQt5.QtGui import QIcon,QPageLayout,QPainter
-from PyQt5.QtGui import QPdfWriter
-from PyQt5.QtGui import QPen
+
 from PyQt5.QtPrintSupport import QPrinter, QPrintPreviewDialog
-from PyQt5.QtWidgets import QAction, qApp, QSizePolicy, QDesktopWidget
+from PyQt5.QtWidgets import QAction, qApp
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5 import  QtPrintSupport
-from PyQt5.QtWidgets import QTextEdit
+
 
 from Qt import CentralWiget
-#from reportlab.lib.pagesizes import letter
-#from reportlab.pdfgen import canvas
+
 
 class MainWindow(QMainWindow):
     """Главное окно приложения"""
@@ -244,26 +240,15 @@ class MainWindow(QMainWindow):
             printer.setOutputFileName(filename[0])
             self.resultTE.document().print_(printer)
         else:
-            #error= QMessageBox.about(self, 'Не возможно записать в файл',
-               #               'Не возможно записать в файл <br>{} <br>Возможно открыт в другой программе'.format(filename[0]))
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Critical)
-
             msg.setText("Ошибка записи в файл")
             msg.setInformativeText('Не возможно записать в файл <br>{} '.format(filename[0]))
             msg.setWindowTitle("Не возможно записать в файл")
             msg.setDetailedText("{} Возможно открыт в другой программе".format(filename[0]))
             msg.setStandardButtons(QMessageBox.Ok )
-            #msg.resize(600, 200)
-            #msg.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-           #msg.setMaximumHeight(1000) #// here
-            #msg.setMinimumHeight(1000)
-
-            #screenRect = QDesktopWidget().screen().rect();
-            #msg.move(QPoint(screenRect.width() / 2 - mSize.width() / 2,
-                         # screenRect.height() / 2 - mSize.height() / 2))
             msg.exec()
-            #msg.buttonClicked.connect(msgbtn)
+
 
 
 
