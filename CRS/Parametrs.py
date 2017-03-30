@@ -76,10 +76,11 @@ class Рarameters:
         return str
 
     def strWin(self, *args, **kwargs):
-        str="Параметры для расчетов:<br>"
+        str="<b>Параметры для расчетов:</b><br>"
+
         for k in self.List.keys():
-            str="{} &nbsp;&nbsp;&nbsp;&nbsp;{}<br>".format (str, self.List[k].strConsol())
-        str=str+"Расчетные параметры:<br>"
+            str="{} &nbsp;&nbsp;&nbsp;&nbsp; {}</b><br>".format (str, self.List[k].strConsol())
+        str=str+"<b>Расчетные параметры:</b><br>"
         for k in self.ListCalc.keys():
             str = "{} &nbsp;&nbsp;&nbsp;&nbsp;{}<br>".format(str, self.ListCalc[k].strConsol())
         str = "{} {}".format(str, self.htmlResult[self.Result])

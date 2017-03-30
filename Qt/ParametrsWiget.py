@@ -113,7 +113,7 @@ class ParamTableWiget(QTableView):
         self.sti.setHorizontalHeaderLabels(["Параметр", "Значение", "Ед.изм"])
         self.sti.setVerticalHeaderLabels(self.Param.List.keys())
         self.setModel(self.sti)
-        self.setColumnWidth(0, 200)
+        self.setColumnWidth(0, 250)
         self.setColumnWidth(1, 90)
         self.setColumnWidth(2, 50)
         # self.setC`

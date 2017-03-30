@@ -1,20 +1,21 @@
-from PyQt5.QtCore import QFileInfo
+import os
+
+from PyQt5.QtCore import QFileInfo, QSize, QPoint
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon,QPageLayout,QPainter
 from PyQt5.QtGui import QPdfWriter
 from PyQt5.QtGui import QPen
 from PyQt5.QtPrintSupport import QPrinter, QPrintPreviewDialog
-from PyQt5.QtWidgets import QAction, qApp
+from PyQt5.QtWidgets import QAction, qApp, QSizePolicy, QDesktopWidget
 from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.QtWidgets import QMessageBox
-#from App import App_Variable
 from PyQt5 import  QtPrintSupport
 from PyQt5.QtWidgets import QTextEdit
 
 from Qt import CentralWiget
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+#from reportlab.lib.pagesizes import letter
+#from reportlab.pdfgen import canvas
 
 class MainWindow(QMainWindow):
     """Главное окно приложения"""
@@ -34,7 +35,7 @@ class MainWindow(QMainWindow):
         #print (self.Variable.)
         self.CentralWG=CentralWiget.CWG(self.param, self)
         self.setCentralWidget(self.CentralWG)
-        self.resultTE =QTextEdit()
+        #self.resultTE =QTextEdit()
     def setAction(self):
         self.exitAction = QAction(QIcon('Images/Exit.png'), 'Выход', self)
         self.exitAction.setShortcut('Ctrl+Q')
@@ -186,7 +187,7 @@ class MainWindow(QMainWindow):
 
 
     def printPreview(self, printer):
-        self.resultTE.print_(printer)
+        self.resultTE.document().print_(printer)
 
     def filePrintPdf(self):
         #fn, _ = QFileDialog.getSaveFileName(self, "Экспорт в PDF", None,
@@ -195,6 +196,9 @@ class MainWindow(QMainWindow):
         #if fn:
             #if QFileInfo(fn).suffix().isEmpty():
                 #fn += '.pdf'
+
+
+        """
         writer=QPdfWriter("test.pdf")
         writer.setCreator("программа расчета валка на прочность")
         writer.setTitle("программа расчета валка на прочность")
@@ -208,11 +212,58 @@ class MainWindow(QMainWindow):
         painter.drawText(100, 100, 100, 100, Qt.AlignLeft, "ssssss")
         painter.drawLine(10,10,30,30)
         painter.end()
+        
+        
+        """
             #painter= self.resultTE.
             #printer = QPrinter(QPrinter.HighResolution)
             #printer.setOutputFormat(QPrinter.PdfFormat)
             #printer.setOutputFileName(fn)
             #self.resultTE.document.print_(printer)
+        filename = QFileDialog.getSaveFileName(self, "Экспорт в PDF", None,\
+                                            "PDF files (*.pdf);;All Files (*)")
+        #print (filename)
+        w=True
+        try:
+            filehandle = open(filename[0], 'w')
+            filehandle.close()
+        except IOError:
+            print('Unable to write to file ' + filename[0])
+            w=False
+        #if os.access(filename[0], os.W_OK):
+            #pass
+            #print ("Можно писать")
+        #else:
+            #pass
+           #print("Нельзя писать")
+        if w:
+            printer = QPrinter(QPrinter.HighResolution)
+            printer.setPageSize(QPrinter.A4)
+            printer.setColorMode(QPrinter.Color)
+            printer.setOutputFormat(QPrinter.PdfFormat)
+            printer.setOutputFileName(filename[0])
+            self.resultTE.document().print_(printer)
+        else:
+            #error= QMessageBox.about(self, 'Не возможно записать в файл',
+               #               'Не возможно записать в файл <br>{} <br>Возможно открыт в другой программе'.format(filename[0]))
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+
+            msg.setText("Ошибка записи в файл")
+            msg.setInformativeText('Не возможно записать в файл <br>{} '.format(filename[0]))
+            msg.setWindowTitle("Не возможно записать в файл")
+            msg.setDetailedText("{} Возможно открыт в другой программе".format(filename[0]))
+            msg.setStandardButtons(QMessageBox.Ok )
+            #msg.resize(600, 200)
+            #msg.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            msg.setMaximumHeight(1000) #// here
+            msg.setMinimumHeight(1000)
+
+            #screenRect = QDesktopWidget().screen().rect();
+            #msg.move(QPoint(screenRect.width() / 2 - mSize.width() / 2,
+                         # screenRect.height() / 2 - mSize.height() / 2))
+            msg.exec()
+            #msg.buttonClicked.connect(msgbtn)
 
 
 

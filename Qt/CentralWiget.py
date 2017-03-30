@@ -34,7 +34,7 @@ class CWG(QWidget):
         splitterH.addWidget(self.ParamTableWiget)
         splitterH.addWidget(self.Report)
         #splitterH.scroll(200,500)
-        splitterH.setSizes([250,500])
+        splitterH.setSizes([300,500])
         sp = splitterH.sizePolicy()
         sp.setVerticalPolicy(QSizePolicy.Expanding)
         splitterH.setSizePolicy(sp)
@@ -56,5 +56,7 @@ class CWG(QWidget):
     def Calc (self):
         self.param.Calc()
         self.Report.clear()
-        self.Report.append ("<b style='color:#ff0000'>Время расчета: {}</span></b>".format(time.strftime("%c")))
+        #self.Report.append ('<b> Отчет по вычислениям</b>')
+
+        self.Report.append ('<b style="color:#ff0000">Отчет по вычислениям: {}</span></b>'.format(time.strftime("%c")))
         self.Report.append (self.param.strWin())
