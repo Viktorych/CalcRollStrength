@@ -256,8 +256,8 @@ class MainWindow(QMainWindow):
             msg.setStandardButtons(QMessageBox.Ok )
             #msg.resize(600, 200)
             #msg.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-            msg.setMaximumHeight(1000) #// here
-            msg.setMinimumHeight(1000)
+           #msg.setMaximumHeight(1000) #// here
+            #msg.setMinimumHeight(1000)
 
             #screenRect = QDesktopWidget().screen().rect();
             #msg.move(QPoint(screenRect.width() / 2 - mSize.width() / 2,
